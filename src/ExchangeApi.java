@@ -1,14 +1,12 @@
 import com.google.gson.Gson;
-import dto.ConversorDto;
+
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.URI;
 import java.net.http.HttpResponse;
-
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class ExchangeApi {
@@ -21,13 +19,12 @@ public class ExchangeApi {
     final static String APIKEY = "https://v6.exchangerate-api.com/v6/aafd4024a38845e16e3a0cd5/";
     final static String Y = "/";
     final static HttpClient client = HttpClient.newHttpClient();
-    final static Scanner read = new Scanner(System.in);
+
 
 
 
     public static String pedirMoneda(String baseOrDestino) {
-           System.out.println("Ingrese siglas o nombre de la moneda "+ baseOrDestino);
-           return read.next();
+        return EntradaUsuario.leerTexto("Ingrese siglas o nombre de la moneda "+ baseOrDestino);
 
     }
 
@@ -68,19 +65,16 @@ public class ExchangeApi {
                         coin2 + Y +
                         valueConver))
                 .build();
-        System.out.println(APIKEY + Y +
-                "pair"+ Y +
-                coin1 + Y +
-                coin2 + Y +
-                valueConver);
 
         return  client.send(request, HttpResponse.BodyHandlers.ofString());
 
     }
 
     public static String validarMoneda(List<List <String>> listMonedas) throws IOException, InterruptedException {
-        System.out.println("Si no su moneda no se encuentra dentro de la lista ingrese 0");
-        String moneda= read.next().toUpperCase();
+        String moneda = EntradaUsuario
+                .leerTexto("Si no su moneda no se encuentra dentro de la lista ingrese 0")
+                .toUpperCase();
+
         List<String> siglas = listMonedas.stream().map(List::getFirst).toList();
         if (moneda.equals("0")){
             String opcion = ExchangeApi.pedirMoneda("");
@@ -93,15 +87,6 @@ public class ExchangeApi {
         }
         return moneda;
 
-    }
-
-    public static Double validarValor(){
-        String valor = read.next();
-        if (!valor.matches("\\d+(\\.\\d+)?")){
-            System.out.println("Valor no permitido\nIntentelo de nuevo por favor");
-            return validarValor();
-        }
-        return Double.parseDouble(valor);
     }
 
 

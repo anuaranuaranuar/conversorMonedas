@@ -27,8 +27,9 @@ public class Main {
                 ExchangeApi.listarMoneda(ExchangeApi.filtarMonedas(opcion2));
                 String coin2 = ExchangeApi.validarMoneda(monedas.getSupported_codes());
 
-                System.out.println("Ingrese valor a convertir de " + coin1 + " a " + coin2);
-                Double valueToConver = ExchangeApi.validarValor();
+
+                Double valueToConver = EntradaUsuario
+                        .leerDecimal("Ingrese valor a convertir de " + coin1 + " a " + coin2);
 
                 HttpResponse<String> res = ExchangeApi.requestCoinConver(coin1,coin2,valueToConver);
 

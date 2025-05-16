@@ -1,42 +1,36 @@
 import com.google.gson.Gson;
 import dto.ConversorDto;
-
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.http.HttpResponse;
-import java.util.Scanner;
 
 public class Main {
 
-
-
-    public static void main(String[] args) {
-        String salir;
-        Scanner read = new Scanner(System.in);
+    public static void main(String[] args) throws IOException, InterruptedException {
+        String exit;
         Gson gson = new Gson();
 
         do{
             try {
 
-              ExchangeApi monedas = ExchangeApi.getCodes();
+                ExchangeApi currencies = ExchangeApi.getCodes();
 
-                String opcion1 = ExchangeApi.pedirMoneda("base");
-                ExchangeApi.listarMoneda(ExchangeApi.filtarMonedas(opcion1));
-                String coin1 = ExchangeApi.validarMoneda(monedas.getSupported_codes());
+                String option1 = ExchangeApi.askCurrency("base");
+                ExchangeApi.toListCurrency(ExchangeApi.filterCurrency(option1));
+                String currency1 = ExchangeApi.checkCurrency(currencies.getSupported_codes());
 
-                String opcion2 = ExchangeApi.pedirMoneda("destino");
-                ExchangeApi.listarMoneda(ExchangeApi.filtarMonedas(opcion2));
-                String coin2 = ExchangeApi.validarMoneda(monedas.getSupported_codes());
+                String option2 = ExchangeApi.askCurrency("destino");
+                ExchangeApi.toListCurrency(ExchangeApi.filterCurrency(option2));
+                String currency2 = ExchangeApi.checkCurrency(currencies.getSupported_codes());
 
+                BigDecimal valueToConvert = InputUser
+                        .readBigDecimal("Ingrese valor a convertir de " + currency1 + " a " + currency2);
+                System.out.println(valueToConvert);
 
-                Double valueToConver = EntradaUsuario
-                        .leerDecimal("Ingrese valor a convertir de " + coin1 + " a " + coin2);
+                HttpResponse<String> res = ExchangeApi
+                        .requestCurrencyConvert(currency1,currency2,valueToConvert);
 
-                HttpResponse<String> res = ExchangeApi.requestCoinConver(coin1,coin2,valueToConver);
-
-
-                System.out.println(res.body());
                 ConversorDto dto = gson.fromJson(res.body(), ConversorDto.class);
-
                 System.out.println("El resultado es " + dto.conversion_result());
 
             } catch (IOException e) {
@@ -44,11 +38,10 @@ public class Main {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("ingrese si/no para salir");
-            salir = read.next().toUpperCase();
 
-        } while (!salir.equals("SI"));
+            exit = InputUser.readInput("Ingrese si/no para salir");
 
+        } while (!exit.equalsIgnoreCase("SI"));
 
     }
 }

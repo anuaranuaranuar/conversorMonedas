@@ -1,7 +1,8 @@
 package dto;
 
-public record CodigoDto(
-        String[] supported_codes,
-        String result) {
+import java.util.List;
 
+public record CodigoDto(
+        List<List<String>> supported_codes,
+        String result) {
 }
